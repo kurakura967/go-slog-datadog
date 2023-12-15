@@ -1,20 +1,15 @@
 # go-slog-datadog
 
+[zozo advent calendar 2023](https://qiita.com/advent-calendar/2023/zozo) #2 執筆用レポジトリ
+
 ## 準備
 ```bash
 # datadog agentを起動
-API_KEY=xxxx
-docker run -d --cgroupns host \
-              --pid host \
-              -v /var/run/docker.sock:/var/run/docker.sock:ro \
-              -v /proc/:/host/proc/:ro \
-              -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro \
-              -p 127.0.0.1:8126:8126/tcp \
-              -e DD_API_KEY=$API_KEY \
-              -e DD_APM_ENABLED=true \
-              -e DD_SITE="ap1.datadoghq.com" \
-              gcr.io/datadoghq/agent:latest
+docker compose build --no-cache
+docker compose up -d
+```
 
-# アプリケーションを起動
-go run main.go
+## ログ出力
+```yaml
+curl -X GET http://localhost:8080/
 ```

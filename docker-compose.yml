@@ -1,0 +1,40 @@
+version: "3"
+services:
+  app:
+    container_name: app
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DD_SERVICE=sample-service
+      - DD_ENV=dev
+      - DD_VERSION=0.0.1
+      - DD_AGENT_HOST=datadog-agent
+    volumes:
+      - .:/home/go-slog-datadog
+    depends_on:
+      - datadog-agent
+
+  datadog-agent:
+    container_name: datadog-agent
+    image: gcr.io/datadoghq/agent:latest
+    pid: host
+    environment:
+      - DD_API_KEY=<YOUR_API_KEY>
+      - DD_SITE=ap1.datadoghq.com
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_APM_ENABLED=true
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_AC_EXCLUDE=name:datadog
+      - DD_LOGS_CONFIG_USE_HTTP=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    ports:
+        - "8126:8126/tcp"
+        - "8125:8125/udp"
